@@ -1,14 +1,15 @@
 # D365FinOps
 
-DELETE ADDRESS
+## Delete vendor addressess(s) from SQL
 
 
  DirPartyLocation
- >DirPartyTable
-  >>VendTable
- >LogisticsLocation
-  >>LogisticsPostalAddress
+ -DirPartyTable
+  -VendTable
+ -LogisticsLocation
+  -LogisticsPostalAddress
 
+```sql
 --1) Delete all addresses except primary address
 --2) Change Address description with Vendor Name (only for Primary Address)
 --3) Add purpose "Delivery" & "RemitTo" to existing primary address
@@ -52,6 +53,7 @@ WHERE LogisticsLocation.RecId IN (
 		AND DirPartyLocation.ISPRIMARY <> 1
 )
 AND LogisticsLocation.ISPOSTALADDRESS = 1
+PRINT 'Deleted LogisticsLocation'
 
 DELETE FROM DirPartyLocation
 WHERE RecId IN (
@@ -65,6 +67,7 @@ WHERE RecId IN (
 		VendTable.AccountNum = @VendorId
 )
 AND DirPartyLocation.ISPRIMARY <> 1
+PRINT 'Deleted DirPartyLocation'
 
 SELECT @PrimaryPartyLocation = DirPartyLocation.RECID
 FROM DirPartyLocation 
@@ -75,6 +78,8 @@ JOIN DirPartyTable ON
 WHERE
 	VendTable.AccountNum = @VendorId
 	AND DirPartyLocation.ISPRIMARY = 1
+PRINT ''
+PRINT '@PrimaryPartyLocation = ' + @PrimaryPartyLocation
 
 IF NOT EXISTS (
 	SELECT * FROM LogisticsLocation WHERE [DESCRIPTION] = @VendorName AND RecId = @PrimaryPartyLocation
@@ -83,18 +88,31 @@ BEGIN
 	UPDATE LogisticsLocation
 	SET [DESCRIPTION] = @VendorName
 	WHERE RecId = @PrimaryPartyLocation
+	
+	PRINT 'Updated Address description'
 END
+
 
 IF NOT EXISTS (
 	SELECT * FROM DirPartyLocationRole WHERE LOCATIONROLE = @LocationRoleDelivery --Delivery
 		AND PARTYLOCATION = @PrimaryPartyLocation
 )
+BEGIN
     INSERT INTO DirPartyLocationRole (LOCATIONROLE, PartyLocation)
     VALUES (@LocationRoleDelivery, @PrimaryPartyLocation)--Delivery
+	
+	PRINT 'Address set to Delivery role'
+END
+
 
 IF NOT EXISTS (
 	SELECT * FROM DirPartyLocationRole WHERE LOCATIONROLE = @LocationRoleRemitTo --RemitTo
 		AND PARTYLOCATION = @PrimaryPartyLocation
 )
+BEGIN
     INSERT INTO DirPartyLocationRole (LOCATIONROLE, PartyLocation)
     VALUES (@LocationRoleRemitTo, @PrimaryPartyLocation)--RemitTo
+
+	PRINT 'Address set to RemitTo role'
+END
+```
