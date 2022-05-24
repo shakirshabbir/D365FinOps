@@ -1,5 +1,16 @@
 # D365FinOps
 
+## Data entity auto-generate fields
+
+When importing through the Data Management Framework in Dynamics 365 for Finance and Operations, you can use the Auto-generated feature to automatically assign values from the number sequence associated with the field. <b>However, it's worth noting that not all number sequence features are supported.,</b>
+
+The logic is handled by the <b>generateAutoNumbers</b> method in the class <b>DMFGenerateSSISPackage</b>. When looking at the code, the numbers are basically assigned by getting NumberSequenceTable.NextRec and then adding the number of values required based on the number of records being imported. There are some validations, such as making sure the last value isn't higher than NumberSequenceTable.Highest, and it also seem to primarily use any free numbers from NumberSequenceList if any exist.
+
+However, the number sequence feature Preallocation is not supported (see blog post Number sequence preallocation function in Microsoft Dynamics 365 for Finance and Operations by Mohamed Aamer for more information on the Preallocation functionality). [https://blog.mohamedaamer.net/microsoft-dynamics/number-sequence-preallocation-function-in-microsoft-dynamics-365-for-finance-and-operations/] This means that even if it's enabled on the number sequence, the DMF import will still use the NextRec (plus any free numbers from the list). This is most likely for performance reason, as the Preallocation functionality would with all likelihood be slower when importing large volumes of records.
+
+https://www.gangsta.se/blog/entry/auto-generate-values-during-dmf-import
+
+
 ## Delete vendor addressess(s) from SQL
 
 
