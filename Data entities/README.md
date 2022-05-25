@@ -1,6 +1,14 @@
 # All about data entities
 
 ## DMFEntityBase
+```c#
+    public void new(Common _staging)
+    {
+        super();
+        stagingRecord = _staging;
+    }
+```
+
 ## DmfEntityWriter
 
 Number sequence preallocation function in Microsoft Dynamics 365 for Finance and Operations
