@@ -35,7 +35,7 @@ On the target environment:
 ## Step#2 Backup & Restore DEV database
 1. Backup AxDB database
     
-    <img src="https://user-images.githubusercontent.com/1909329/173927519-51cf3fbf-b01f-4822-95a6-7cacd7960bfa.png" width="900">
+    <img src="https://user-images.githubusercontent.com/1909329/173927519-51cf3fbf-b01f-4822-95a6-7cacd7960bfa.png" width="750
 1. Restore as AxDB_CopyForExport_06152022
 
     <img src="https://user-images.githubusercontent.com/1909329/173933534-448a2f56-27e2-45e5-9949-34ba6765cb7e.png" width="700">
@@ -107,8 +107,9 @@ Example:
 ```Console
 SqlPackage.exe /a:export /ssn:localhost /sdn:AxDB_CopyForExport_06152022 /tf:"D:\Backup\AxDB_moveToSAT.bacpac" /p:CommandTimeout=1200 /p:VerifyFullTextDocumentTypesSupported=false
 ```
+> [!NOTE] This is a long running process (takes aboout 30-60 minutes or more depending on the database size)
 
-![image](https://user-images.githubusercontent.com/1909329/173954577-a5c9cae4-0c91-4165-814d-dbd441e098b2.png)
+<img src="https://user-images.githubusercontent.com/1909329/173956740-a00f6b43-392b-4a33-8ada-c7edbcabb649.png" width="750">
 
 ## Step#5 (Upload the .bacpac file to LCS)
 
