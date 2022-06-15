@@ -70,6 +70,8 @@ When the operation is completed successfully, it says “Successfully imported d
 
 
 ## Step#4 (Update the imported database)
+> [!NOTE] Line 91, 94, 95, 98 may result in error if retail is not installed and it is fine
+
 ```sql
 USE [AxDB_copiedFromSandbox_06152022]
 GO
@@ -85,7 +87,7 @@ EXEC sp_addrolemember 'db_datareader', 'axmrruntimeuser'
 EXEC sp_addrolemember 'db_datawriter', 'axmrruntimeuser'
 
 /*
-  Line 91, 94, 95, 98 may result in error if retail is not installed and it is fine
+  Line 91, 94, 95, 98 may result in error and shall be ignored
 */
 CREATE USER axretaildatasyncuser FROM LOGIN axretaildatasyncuser
 EXEC sp_addrolemember 'DataSyncUsersRole', 'axretaildatasyncuser'
