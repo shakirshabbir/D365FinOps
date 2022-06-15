@@ -7,7 +7,7 @@ stateDiagram-v2
   s2: Download the latest copy of SQLPackage
   s3: Extract .bacpac file using SQLPackage utility
   note right of s2
-    This is a one time step only
+    This is one time setup only
   end note
   %%c1: Prepare the imported database
   s4: Update the imported database
@@ -189,3 +189,4 @@ GO
    - Management Reporter 2012 Process Service
 
 ## Step#7 (Synchronize the database)
+<img src="https://user-images.githubusercontent.com/1909329/173793446-6d785b3d-51a0-4263-b07b-b577c34022cf.png" width="500">
