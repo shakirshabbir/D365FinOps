@@ -9,7 +9,17 @@ stateDiagram-v2
   note right of s2
     This is a one time step only
   end note
+  %%c1: Prepare the imported database
   s4: Update the imported database
+  s5: Reprovision admin user
+  note right of s5
+    This may not be required if 
+     environment adminstrators 
+       on both environments
+            are same
+  end note  
+  s6: Swap the database
+  s7: Synchronize the database
 
   state fork_state <<fork>>
     [*] --> fork_state : Take a backup of AxDB database on the target environment
@@ -18,6 +28,11 @@ stateDiagram-v2
     s1 --> s3
     s2 --> s3
     s3 --> s4
+    s4 --> s5
+    s4 --> s6
+    s5 --> s6
+    s6 --> s7
+    s7 --> [*]
 ```
 ## Step#1 (Export copy of the sandbox database)
 
@@ -50,6 +65,10 @@ SqlPackage.exe /a:import /sf:"D:\Backup\SATbackup.bacpac" /tsn:localhost /tdn:Ax
 
 ![image](https://user-images.githubusercontent.com/1909329/173769433-8c620db3-6908-4863-ba01-0b230c05fff3.png)
 
+When the operation is completed successfully, it says “Successfully imported database”.
+![image](https://user-images.githubusercontent.com/1909329/173782469-b4e456c5-0b4e-4f3b-aabe-8f71ffca4f73.png)
+
+
 ## Step#4 (Update the imported database)
 ```sql
 USE [AxDB_copiedFromSandbox_06152022]
@@ -65,6 +84,9 @@ CREATE USER axmrruntimeuser FROM LOGIN axmrruntimeuser
 EXEC sp_addrolemember 'db_datareader', 'axmrruntimeuser'
 EXEC sp_addrolemember 'db_datawriter', 'axmrruntimeuser'
 
+/*
+  Line 91, 94, 95, 98 may result in error if retail is not installed and it is fine
+*/
 CREATE USER axretaildatasyncuser FROM LOGIN axretaildatasyncuser
 EXEC sp_addrolemember 'DataSyncUsersRole', 'axretaildatasyncuser'
 
@@ -115,12 +137,55 @@ END CATCH
 CLOSE retail_ftx; 
 DEALLOCATE retail_ftx; 
 -- End Refresh Retail FullText Catalogs
-
 ```
 
+Enable change tracking
+```sql
+ALTER DATABASE [AxDB_copiedFromSandbox_06152022] SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 6 DAYS, AUTO_CLEANUP = ON);
+```
 
 ## Step#5 (Reprovision admin user)
+```sql
+USE [master]
+GO
 
+DECLARE @SID NVARCHAR(124) 
+DECLARE @NetworkAlias NVARCHAR(255)
+SELECT 
+	  @SID = [SID]
+	 ,@NetworkAlias = NetworkAlias
+FROM [AxDB].[dbo].[UserInfo] WHERE Id = 'Admin'
+
+UPDATE [AxDB_copiedFromSandbox_06152022].[dbo].[UserInfo] SET
+	 [SID] = @SID
+	,NetworkAlias = @NetworkAlias
+WHERE Id = 'Admin'
+```
 ## Step#6 (Swap the database)
+1. Stop the following services on the target environment
+   - World Wide Web Publishing Service
+   - Microsoft Dynamics 365 Unified Operations: Batch Management Service
+   - Management Reporter 2012 Process Service
+
+2. Run the following commands to perform the swap
+```sql
+USE [master]
+GO
+
+ALTER DATABASE [AxDB] SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+ALTER DATABASE [AxDB] MODIFY NAME = [AxDB_Orig]
+ALTER DATABASE [AxDB_Orig] SET MULTI_USER WITH ROLLBACK IMMEDIATE
+GO
+
+ALTER DATABASE [AxDB_copiedFromSandbox_06152022] SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+ALTER DATABASE [AxDB_copiedFromSandbox_06152022] MODIFY NAME = [AxDB]
+ALTER DATABASE [AxDB] SET MULTI_USER WITH ROLLBACK IMMEDIATE
+GO
+```
+
+3. Restart the following services on the target environment
+   - World Wide Web Publishing Service
+   - Microsoft Dynamics 365 Unified Operations: Batch Management Service
+   - Management Reporter 2012 Process Service
 
 ## Step#7 (Synchronize the database)
