@@ -63,10 +63,11 @@ SqlPackage.exe /a:import /sf:"D:\Backup\SATbackup.bacpac" /tsn:localhost /tdn:Ax
 ```
 > [!NOTE] This is a long running process (takes aboout 30-60 minutes or more depending on the database size)
 
-![image](https://user-images.githubusercontent.com/1909329/173769433-8c620db3-6908-4863-ba01-0b230c05fff3.png)
+<img src="https://user-images.githubusercontent.com/1909329/173769433-8c620db3-6908-4863-ba01-0b230c05fff3.png" width="750">
 
-When the operation is completed successfully, it says “Successfully imported database”.
-![image](https://user-images.githubusercontent.com/1909329/173782469-b4e456c5-0b4e-4f3b-aabe-8f71ffca4f73.png)
+When the operation is completed successfully, it says **"Successfully imported database"**.
+
+<img src="https://user-images.githubusercontent.com/1909329/173782469-b4e456c5-0b4e-4f3b-aabe-8f71ffca4f73.png" width="350">
 
 
 ## Step#4 (Update the imported database)
