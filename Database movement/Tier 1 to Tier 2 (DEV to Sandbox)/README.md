@@ -35,7 +35,7 @@ On the target environment:
 ## Step#2 Backup & Restore DEV database
 1. Backup AxDB database
     
-    <img src="https://user-images.githubusercontent.com/1909329/173927519-51cf3fbf-b01f-4822-95a6-7cacd7960bfa.png" width="750
+    <img src="https://user-images.githubusercontent.com/1909329/173927519-51cf3fbf-b01f-4822-95a6-7cacd7960bfa.png" width="750">
 1. Restore as AxDB_CopyForExport_06152022
 
     <img src="https://user-images.githubusercontent.com/1909329/173933534-448a2f56-27e2-45e5-9949-34ba6765cb7e.png" width="700">
