@@ -114,6 +114,9 @@ SqlPackage.exe /a:export /ssn:localhost /sdn:AxDB_CopyForExport_06152022 /tf:"D:
 ![image](https://user-images.githubusercontent.com/1909329/173960969-9b864b63-ac5a-472d-bfdb-61400b14e6a7.png)
   
 ## Step#5 (Upload the .bacpac file to LCS)
+- Upload the .bacpac file to LCS
+
+![image](https://user-images.githubusercontent.com/1909329/199771373-62486714-7a05-4571-bb4b-8c18f684101b.png)
 
 ## Step#6 (Import the .bacpac file on Sandbox using DataALM operation)
 ![image](https://user-images.githubusercontent.com/1909329/173960697-c578bc4b-4b5a-457a-b89c-8b37d1c29658.png)
@@ -122,6 +125,6 @@ SqlPackage.exe /a:export /ssn:localhost /sdn:AxDB_CopyForExport_06152022 /tf:"D:
   
 ![image](https://user-images.githubusercontent.com/1909329/173960833-a85995ae-3454-4b10-a2d5-94d0827fd7fc.png)
 
-
-
 ## Step#7 (Enable the users)
+- When the database movement operation is completed on the Tier 2 environment, all users are disabled except the evironment administrator
+- The environment administrator must log in and enable users
