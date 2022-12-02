@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "ebf12c85-3de9-4d3f-8887-cd24029edb13",
+		"name": "DMF REST API Import",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19768622"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var json = JSON.parse(responseBody);\r",
+							"tests[\"Get Azure AD Token\"] = !json.error && responseBody !== '' && responseBody !== '{}' && json.access_token !== '';\r",
+							"postman.setEnvironmentVariable(\"bearerToken\", json.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "{{grant_type}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "{{resource}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/:tenant_id/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						":tenant_id",
+						"oauth2",
+						"token"
+					],
+					"variable": [
+						{
+							"key": "tenant_id",
+							"value": "{{tenant_id}}",
+							"type": "string"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAzureWriteableURL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Response 200 successful\"] = pm.response.code == 200\r",
+							"var json = JSON.parse(responseBody);\r",
+							"tests[\"GetAzureWriteableURL success\"] = !json.error && responseBody !== '' && responseBody !== '{}';\r",
+							"var json = JSON.parse(json.value);\r",
+							"var blobURL = json.BlobUrl;\r",
+							"postman.setEnvironmentVariable(\"package_URL\", blobURL);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"uniqueFileName\":\"{{$guid}}.zip\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{resource}}/data/DataManagementDefinitionGroups/Microsoft.Dynamics.DataEntities.GetAzureWriteUrl",
+					"host": [
+						"{{resource}}"
+					],
+					"path": [
+						"data",
+						"DataManagementDefinitionGroups",
+						"Microsoft.Dynamics.DataEntities.GetAzureWriteUrl"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload file to blob storage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Upload successful\"] = pm.response.code == 201"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-ms-blob-type",
+						"value": "BlockBlob",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "59yWus2G8/VIT Order transactions-34.zip"
+					}
+				},
+				"url": {
+					"raw": "{{package_URL}}",
+					"host": [
+						"{{package_URL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Execute ImportFromPackage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Response 200 successful\"] = pm.response.code == 200\r",
+							"var json = JSON.parse(responseBody);\r",
+							"\r",
+							"var executionId = json.value;\r",
+							"\r",
+							"tests[\"Import started\"] = !json.error && responseBody !== '' && responseBody !== '{}' && executionId != '';\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"execution_Id\", executionId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"packageUrl\": \"{{package_URL}}\",\r\n    \"definitionGroupId\": \"\",\r\n    \"executionId\": \"\",\r\n    \"execute\": true,\r\n    \"overwrite\": true,\r\n    \"legalEntityId\": \"01\"\r\n}"
+				},
+				"url": {
+					"raw": "{{resource}}/data/DataManagementDefinitionGroups/Microsoft.Dynamics.DataEntities.ImportFromPackage",
+					"host": [
+						"{{resource}}"
+					],
+					"path": [
+						"data",
+						"DataManagementDefinitionGroups",
+						"Microsoft.Dynamics.DataEntities.ImportFromPackage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Status of Execution",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Response 200 successful\"] = pm.response.code == 200\r",
+							"var json = JSON.parse(responseBody);\r",
+							"tests[\"Status fetched\"] = !json.error && responseBody !== '' && responseBody !== '{}';"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"executionId\":\"{{execution_Id}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{resource}}/data/DataManagementDefinitionGroups/Microsoft.Dynamics.DataEntities.GetExecutionSummaryStatus",
+					"host": [
+						"{{resource}}"
+					],
+					"path": [
+						"data",
+						"DataManagementDefinitionGroups",
+						"Microsoft.Dynamics.DataEntities.GetExecutionSummaryStatus"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
