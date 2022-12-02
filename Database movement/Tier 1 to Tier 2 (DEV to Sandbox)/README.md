@@ -35,7 +35,7 @@ On the target environment:
 ## Step#2 Backup & Restore DEV database
 1. Backup AxDB database
     
-    <img src="https://user-images.githubusercontent.com/1909329/173927519-51cf3fbf-b01f-4822-95a6-7cacd7960bfa.png" width="900">
+    <img src="https://user-images.githubusercontent.com/1909329/173927519-51cf3fbf-b01f-4822-95a6-7cacd7960bfa.png" width="750">
 1. Restore as AxDB_CopyForExport_06152022
 
     <img src="https://user-images.githubusercontent.com/1909329/173933534-448a2f56-27e2-45e5-9949-34ba6765cb7e.png" width="700">
@@ -107,11 +107,24 @@ Example:
 ```Console
 SqlPackage.exe /a:export /ssn:localhost /sdn:AxDB_CopyForExport_06152022 /tf:"D:\Backup\AxDB_moveToSAT.bacpac" /p:CommandTimeout=1200 /p:VerifyFullTextDocumentTypesSupported=false
 ```
+> [!NOTE] This is a long running process (takes aboout 30-60 minutes or more depending on the database size)
 
-![image](https://user-images.githubusercontent.com/1909329/173954577-a5c9cae4-0c91-4165-814d-dbd441e098b2.png)
+<img src="https://user-images.githubusercontent.com/1909329/173956740-a00f6b43-392b-4a33-8ada-c7edbcabb649.png" width="750">
 
+![image](https://user-images.githubusercontent.com/1909329/173960969-9b864b63-ac5a-472d-bfdb-61400b14e6a7.png)
+  
 ## Step#5 (Upload the .bacpac file to LCS)
+- Upload the .bacpac file to LCS
+
+![image](https://user-images.githubusercontent.com/1909329/199771373-62486714-7a05-4571-bb4b-8c18f684101b.png)
 
 ## Step#6 (Import the .bacpac file on Sandbox using DataALM operation)
+![image](https://user-images.githubusercontent.com/1909329/173960697-c578bc4b-4b5a-457a-b89c-8b37d1c29658.png)
+  
+![image](https://user-images.githubusercontent.com/1909329/173960747-b263c742-3027-4dd7-afc2-081ca33fed4a.png)
+  
+![image](https://user-images.githubusercontent.com/1909329/173960833-a85995ae-3454-4b10-a2d5-94d0827fd7fc.png)
 
 ## Step#7 (Enable the users)
+- When the database movement operation is completed on the Tier 2 environment, all users are disabled except the evironment administrator
+- The environment administrator must log in and enable users
