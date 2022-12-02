@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "a041bc77-4b84-4e92-aae4-fe794ccd3f91",
+		"name": "DMF REST API Export",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19768622"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var json = JSON.parse(responseBody);\r",
+							"tests[\"Get Azure AD Token\"] = !json.error && responseBody !== '' && responseBody !== '{}' && json.access_token !== '';\r",
+							"postman.setEnvironmentVariable(\"bearerToken\", json.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "{{grant_type}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "{{resource}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/:tenant_id/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						":tenant_id",
+						"oauth2",
+						"token"
+					],
+					"variable": [
+						{
+							"key": "tenant_id",
+							"value": "{{tenant_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Execute ExportToPackage",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var json = JSON.parse(responseBody);\r",
+							"tests[\"Export triggered\"] = !json.error && responseBody !== '' && responseBody !== '{}' && json.value != ''\r",
+							"postman.setEnvironmentVariable(\"execution_Id\", json.value);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"definitionGroupId\": \"INT_EPRO_CUST_OUTBOUND\",\r\n    \"packageName\": \"\",\r\n    \"executionId\": \"\",\r\n    \"reExecute\":true,\r\n    \"legalEntityId\": \"{{dataAreaId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{resource}}/data/DataManagementDefinitionGroups/Microsoft.Dynamics.DataEntities.ExportToPackage",
+					"host": [
+						"{{resource}}"
+					],
+					"path": [
+						"data",
+						"DataManagementDefinitionGroups",
+						"Microsoft.Dynamics.DataEntities.ExportToPackage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Status of Execution",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"executionId\":\"{{execution_Id}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{resource}}/data/DataManagementDefinitionGroups/Microsoft.Dynamics.DataEntities.GetExecutionSummaryStatus",
+					"host": [
+						"{{resource}}"
+					],
+					"path": [
+						"data",
+						"DataManagementDefinitionGroups",
+						"Microsoft.Dynamics.DataEntities.GetExecutionSummaryStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ExportedPackageUrl",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"executionId\": \"{{execution_Id}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{resource}}/data/DataManagementDefinitionGroups/Microsoft.Dynamics.DataEntities.GetExportedPackageUrl",
+					"host": [
+						"{{resource}}"
+					],
+					"path": [
+						"data",
+						"DataManagementDefinitionGroups",
+						"Microsoft.Dynamics.DataEntities.GetExportedPackageUrl"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
