@@ -68,11 +68,13 @@ SqlPackage.exe /a:import /sf:"D:\Backup\SATbackup.bacpac" /tsn:localhost /tdn:Ax
 
 When the operation is completed successfully, it says **"Successfully imported database"**.
 
-<img src="https://user-images.githubusercontent.com/1909329/173782469-b4e456c5-0b4e-4f3b-aabe-8f71ffca4f73.png" width="350">
+<img src="https://user-images.githubusercontent.com/1909329/214500289-82a89ad9-e14d-4a3a-a877-6d697aa4ff71.png" width="750">
 
 
 ## Step#4 (Update the imported database)
 > [!NOTE] Line 91, 94, 95, 98 may result in error if retail is not installed and it is fine
+
+Run the following commands on the imported database
 
 ```sql
 USE [AxDB_copiedFromSandbox_06152022]
