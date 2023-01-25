@@ -54,12 +54,13 @@ cd C:\Program Files\Microsoft SQL Server\160\DAC\bin
 ```
 
 Extract the .bacpac file
+> [!NOTE] Set <b>/TargetEncryptConnection:False</b> [Read this post](https://community.dynamics.com/ax/b/shabibax/posts/issue-with-bacpac-database-import-in-dev-box-using-sqlpackage)
 ```Console
-SqlPackage.exe /a:import /sf:<Location for .bacpac file> /tsn:localhost /tdn:<target database name> /p:CommandTimeout=1200
+SqlPackage.exe /a:import /sf:<Location for .bacpac file> /tsn:localhost /tdn:<target database name> /p:CommandTimeout=1200 /TargetEncryptConnection:False
 ```
 Example:
 ```Console
-SqlPackage.exe /a:import /sf:"D:\Backup\SATbackup.bacpac" /tsn:localhost /tdn:AxDB_copiedFromSandbox_06152022 /p:CommandTimeout=1200
+SqlPackage.exe /a:import /sf:"D:\Backup\SATbackup.bacpac" /tsn:localhost /tdn:AxDB_copiedFromSandbox_06152022 /p:CommandTimeout=1200 /TargetEncryptConnection:False
 ```
 > [!NOTE] This is a long running process (takes aboout 30-60 minutes or more depending on the database size)
 
