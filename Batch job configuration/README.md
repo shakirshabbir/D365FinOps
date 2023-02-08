@@ -14,7 +14,7 @@
 ```sql
 INSERT INTO [BATCHJOB]
 SELECT [CANCELEDBY] 
-	    ,[CAPTION]
+      ,[CAPTION]
       ,'0003'
       ,[DATAPARTITION]
       ,[ENDDATETIME]
