@@ -1,6 +1,6 @@
 # D365 Finance & Operation
 
-## Batch job configuration for multiple legal entities
+## Copy batch job to multiple/all legal entities
 
 Consider a scenario where you need to configure a batch job (example posting general journals) for one legal entity and then you need to replicate the same across all legal entities in your D365 FinOps or D365 Finance & Operations environment. Now, it wont be an issue, if its a handful of legal entities, simply repeat it manually. But, if number of legal entities exceeds 100, or say 200, in my case it was more than 700 legal entities, then you cant just do it manually. You will need an automation. One way to achive it, is write a job in D365 X++, but if this is not a recurring activity and you will need it to do only once/twice before go-live, the following script is handy with only one caveat that I will mention in the end with solution.
 
